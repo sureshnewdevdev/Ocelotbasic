@@ -10,19 +10,20 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 app.UseRouting();
 
 //app.UseHttpsRedirection();
 
-
-
 app.MapGet("/weatherforecast", () =>
 {
-     
     return "Response from Service 1";
+});
+app.MapGet("/weatherforecast2", () =>
+{
+    return "Response from Service 1 test";
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();

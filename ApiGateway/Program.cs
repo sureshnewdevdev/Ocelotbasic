@@ -1,22 +1,28 @@
-using Ocelot.DependencyInjection;
+﻿using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOcelot();
-// Add services to the container.
+/* 🔹 ADD THIS: Load ocelot.json */
+builder.Configuration
+       .SetBasePath(builder.Environment.ContentRootPath)
+       .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+
+/* 🔹 Register Ocelot */
+builder.Services.AddOcelot(builder.Configuration);
+
+/* 🔹 Other services */
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen(); // Optional, if you want Swagger
-
+// builder.Services.AddSwaggerGen(); // Optional
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+/* 🔹 Development settings */
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
+    // app.UseSwagger();
+    // app.UseSwaggerUI();
 }
 
 app.UseRouting();
@@ -26,6 +32,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-app.UseOcelot().Wait();
+/* 🔹 IMPORTANT: Ocelot middleware MUST be last */
+await app.UseOcelot();
 
 app.Run();
